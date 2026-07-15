@@ -1,7 +1,7 @@
 ---
 description: Update the hud session commands (/hud-catchup, /hud-handoff, /hud-update) — pull the latest from the public hud-commands repo and reinstall.
 ---
-Update the hud session commands to the latest version. This only touches the command files in `~/.claude/commands/` — it does not affect the current project.
+Update the hud session commands to the latest version. This only touches the skills in `~/.claude/skills/` and this command file in `~/.claude/commands/` — it does not affect the current project.
 
 The public source repo is: **https://github.com/stocker8/hud-commands** (no login needed to clone or pull).
 

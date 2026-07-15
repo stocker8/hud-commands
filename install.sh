@@ -1,31 +1,25 @@
 #!/usr/bin/env bash
-# Install the slash commands in commands/ into ~/.claude/commands/.
-# The repo is the source of truth: installed copies are overwritten on drift.
+# Install the hud session skills (/hud-catchup, /hud-handoff) plus /hud-update.
+# Thin wrapper: the real installer is tools/install.py (Python 3 stdlib, works
+# on Windows and macOS). Skills go to ~/.claude/skills/ and work in every
+# project. Run again with --repo <path> to add the gitleaks pre-commit hook
+# to a specific repo.
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "$0")" && pwd)"
-dest="$HOME/.claude/commands"
 
-mkdir -p "$dest"
+if command -v python3 >/dev/null 2>&1; then
+  py=python3
+elif command -v python >/dev/null 2>&1; then
+  py=python
+else
+  echo "ERROR: Python 3 not found. Install it and re-run." >&2
+  exit 1
+fi
 
-for src in "$repo_dir"/commands/*.md; do
-  name="$(basename "$src")"
-  target="$dest/$name"
-  if [ -f "$target" ]; then
-    if cmp -s "$src" "$target"; then
-      echo "ok: $name already up to date"
-      continue
-    fi
-    echo "drift: installed $name differed from repo — overwriting (if you hot-fixed it in ~/.claude, port that edit back to the repo)"
-  fi
-  cp "$src" "$target"
-  echo "installed: $name -> $target"
-done
+"$py" "$repo_dir/tools/install.py" "$@"
 
-# The pre-hud names are superseded; remove stale installed copies.
-for legacy in catchup.md handoff.md; do
-  if [ -f "$dest/$legacy" ]; then
-    rm "$dest/$legacy"
-    echo "removed legacy: $legacy (superseded by hud-$legacy)"
-  fi
-done
+# /hud-update is a plain command, not a skill; install it alongside.
+mkdir -p "$HOME/.claude/commands"
+cp "$repo_dir/commands/hud-update.md" "$HOME/.claude/commands/hud-update.md"
+echo "  Installed: ~/.claude/commands/hud-update.md"

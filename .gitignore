@@ -1,0 +1,11 @@
+
+# --- hud session kit ---
+# Transcripts live at ~/claude-logs/<project>/, outside this repo.
+# These entries exist only in case one ever lands here by accident.
+claude-logs/
+*_log[0-9]*.md
+.dev.vars
+.dev.vars.*
+.env
+.env.*
+!.env.example

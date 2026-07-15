@@ -1,16 +1,23 @@
 @echo off
 setlocal
-set "DEST=%USERPROFILE%\.claude\commands"
-if not exist "%DEST%" mkdir "%DEST%"
-copy /Y "%~dp0commands\hud-catchup.md" "%DEST%" >nul
-copy /Y "%~dp0commands\hud-handoff.md" "%DEST%" >nul
-copy /Y "%~dp0commands\hud-update.md" "%DEST%" >nul
-if exist "%DEST%\catchup.md" del "%DEST%\catchup.md"
-if exist "%DEST%\handoff.md" del "%DEST%\handoff.md"
+REM Install the hud session skills. The real installer is tools\install.py.
+where python >nul 2>nul
+if errorlevel 1 (
+  echo ERROR: Python 3 not found on PATH. Install it and re-run.
+  pause
+  exit /b 1
+)
+python "%~dp0tools\install.py"
+if errorlevel 1 (
+  echo.
+  echo Install failed - see the message above.
+  pause
+  exit /b 1
+)
+if not exist "%USERPROFILE%\.claude\commands" mkdir "%USERPROFILE%\.claude\commands"
+copy /Y "%~dp0commands\hud-update.md" "%USERPROFILE%\.claude\commands" >nul
+echo   Installed: %USERPROFILE%\.claude\commands\hud-update.md
 echo.
-echo Installed /hud-catchup, /hud-handoff and /hud-update to:
-echo   %DEST%
-echo.
-echo Restart Claude Code and type / to see them.
+echo Restart Claude Code and type / to see /hud-catchup and /hud-handoff.
 echo.
 pause
