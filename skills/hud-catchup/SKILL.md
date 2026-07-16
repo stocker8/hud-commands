@@ -12,8 +12,8 @@ Everything below was resolved before you saw it. It is current, not recalled.
 ## Is HANDOFF.md trustworthy?
 
 ```!
-python3 "${CLAUDE_SKILL_DIR}/scripts/last_session.py" --exclude-session "${CLAUDE_SESSION_ID}" 2>&1 || \
-  python "${CLAUDE_SKILL_DIR}/scripts/last_session.py" --exclude-session "${CLAUDE_SESSION_ID}" 2>&1
+python3 "${CLAUDE_SKILL_DIR}/scripts/last_session.py" --exclude-session "${CLAUDE_SESSION_ID}" 2>/dev/null || \
+  python "${CLAUDE_SKILL_DIR}/scripts/last_session.py" --exclude-session "${CLAUDE_SESSION_ID}"
 ```
 
 ## HANDOFF.md

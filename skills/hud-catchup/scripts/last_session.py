@@ -176,7 +176,7 @@ def main() -> int:
         print("               exported for it. Check `git log` and the working tree before")
         print("               trusting the handoff. The session record is still on disk:")
         print(f"               {newest}")
-        return 1
+        return 0  # verdict is in the text; non-zero would abort the skill's ```! block
 
     if commits_after:
         print("verdict      : PARTIAL. No stale session on this machine, but the commits")
@@ -184,7 +184,7 @@ def main() -> int:
         print("               likely another machine committed work and skipped")
         print("               /hud-handoff. Read those commits before trusting HANDOFF.md")
         print("               to describe current state.")
-        return 1
+        return 0  # verdict is in the text; non-zero would abort the skill's ```! block
 
     print("verdict      : OK. HANDOFF.md is newer than your last session, and no commits")
     print("               landed after it. It should describe where you actually left off.")
