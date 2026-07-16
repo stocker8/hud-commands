@@ -17,14 +17,16 @@ In any project. That's the whole thing.
 ## Where things land
 
 ```
-~/claude-logs/<project>/15Jul2026_<machine>_log1.md   <- readable transcripts, OUTSIDE git
-<project>/HANDOFF.md                                  <- in git, orients the next session
+<project>/claude-logs/15Jul2026_<machine>_log1.md   <- readable transcripts, gitignored
+<project>/HANDOFF.md                                <- in git, orients the next session
 ```
 
 Two different jobs. `HANDOFF.md` is short, lives in the repo, and travels with
 your code — it's what makes the next session (on any machine) oriented. The
 transcripts are for you to read later; they never enter a session's context and
-never enter git.
+never enter git — the exporter forces `claude-logs/` into `.gitignore` before
+it writes anything, and always writes to the project ROOT's claude-logs even
+when the session ran in a subfolder.
 
 ## How the transcript stays safe
 
@@ -56,8 +58,8 @@ how it catches the *other* machine skipping a handoff.
 
 ## What this does NOT do
 
-- **Not a backup.** Transcripts live in one folder on one disk. Add
-  `~/claude-logs` to your own backup routine.
+- **Not a backup.** Transcripts live on one disk and are excluded from git.
+  Make sure your own backup routine covers the `claude-logs` folders.
 - **No cross-machine transcript sync.** By design; see above.
 - **The gitleaks pre-commit hook is per-repo.** Installing the skills does not
   protect any repo's commits until you run

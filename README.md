@@ -22,8 +22,9 @@ to "write out the chat log" produces a reconstruction, not a record, and
 reliably leaks secrets. The export is scrubbed twice (exact values from your
 env files, then pattern rules) and then verified with an independent
 [gitleaks](https://github.com/gitleaks/gitleaks) scan; if anything survives,
-**nothing is written**. Logs land in `~/claude-logs/<project>/`, outside every
-repo, so they can never be committed or pushed.
+**nothing is written**. Logs land in `<project-root>/claude-logs/`, which the
+exporter forces into `.gitignore` before writing — and the per-repo gitleaks
+pre-commit hook is the backstop — so they are never committed or pushed.
 
 ## Install
 

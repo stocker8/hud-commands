@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """
 Export a Claude Code session transcript from its JSONL source, scrub secrets,
-and write it to a dated log file OUTSIDE the git repository.
+and write it to a dated log file in <project-root>/claude-logs/.
+
+The log folder lives inside the project on the data drive (never on C:), and
+is kept out of git by a .gitignore entry this script enforces before writing.
+The per-repo gitleaks pre-commit hook is the backstop.
 
 Claude Code writes every session to disk incrementally as JSONL. This script
 CONVERTS that ground-truth record. It does not ask a model to recall or
@@ -302,6 +306,32 @@ def verify_gitleaks(text: str) -> tuple[bool, list[str]]:
 # Write
 # ---------------------------------------------------------------------------
 
+def project_root(start: Path) -> Path:
+    """The enclosing git repo's root, or `start` itself if not inside a repo.
+    Keeps logs in ONE folder per project even when the session was launched
+    from a subdirectory (e.g. backend/some_worker)."""
+    for d in (start, *start.parents):
+        if (d / ".git").exists():
+            return d
+    return start
+
+
+def ensure_gitignored(repo_root: Path) -> None:
+    """If repo_root is a git repo, make sure claude-logs/ is gitignored.
+    Transcripts must never be committed, even scrubbed ones."""
+    if not (repo_root / ".git").exists():
+        return
+    gi = repo_root / ".gitignore"
+    lines = gi.read_text(encoding="utf-8", errors="replace").splitlines() if gi.is_file() else []
+    if any(l.strip().rstrip("/") == "claude-logs" for l in lines):
+        return
+    with gi.open("a", encoding="utf-8", newline="\n") as fh:
+        if lines and lines[-1].strip():
+            fh.write("\n")
+        fh.write("# session transcripts (hud-handoff) — never commit\nclaude-logs/\n")
+    print(f"Added claude-logs/ to {gi}")
+
+
 def machine_tag(explicit: str | None = None) -> str:
     """
     Short identifier for this machine, baked into the log filename.
@@ -337,7 +367,8 @@ def main() -> int:
                     help="Machine tag in the filename. Default: this host's short name. "
                          "Prevents two machines colliding on the same day's log number.")
     ap.add_argument("--out-root", default=None,
-                    help="Output root. Default: ~/claude-logs (deliberately outside any repo).")
+                    help="Override the output folder. Default: <project-root>/claude-logs "
+                         "(project-local, gitignored).")
     ap.add_argument("--env-file", action="append", default=None,
                     help="Env file whose values get exact-match redacted. Repeatable.")
     ap.add_argument("--include-tool-input", action="store_true",
@@ -354,7 +385,7 @@ def main() -> int:
     jsonl = find_jsonl(session_id)
     print(f"Source: {jsonl}")
 
-    project = args.project or Path.cwd().name
+    project = args.project or project_root(Path.cwd()).name
     env_files = args.env_file or DEFAULT_ENV_FILES
 
     text, turns = render(jsonl, project, args.include_tool_input)
@@ -402,8 +433,12 @@ def main() -> int:
         sys.stdout.write(text)
         return 0
 
-    out_root = Path(args.out_root).expanduser() if args.out_root else Path.home() / "claude-logs"
-    out_dir = out_root / project
+    if args.out_root:
+        out_dir = Path(args.out_root).expanduser()
+    else:
+        root = project_root(Path.cwd())
+        ensure_gitignored(root)
+        out_dir = root / "claude-logs"
     out_dir.mkdir(parents=True, exist_ok=True)
 
     machine = machine_tag(args.machine)
