@@ -24,17 +24,13 @@ exist, note that plainly — do not guess at state.
 ## Repository state
 
 ```!
-git fetch -q 2>/dev/null; git status -sb
+python3 "${CLAUDE_SKILL_DIR}/scripts/repo_state.py" --fetch 2>/dev/null || python "${CLAUDE_SKILL_DIR}/scripts/repo_state.py" --fetch
 ```
 
-```!
-git log --oneline -15
-```
-
-The first line of `git status -sb` shows the branch and its relation to
-origin. For the machine check in the instructions below, use the platform you
-are running on (from your environment) — Windows PC vs Mac is the distinction
-that matters.
+If it reports NOT A GIT REPOSITORY, say so plainly — this folder has no git
+history to orient from; HANDOFF.md (if present) is the only record. For the
+machine check in the instructions below, use the platform you are running on
+(from your environment) — Windows PC vs Mac is the distinction that matters.
 
 ## Instructions
 

@@ -10,12 +10,11 @@ allowed-tools: Bash(python3 *) Bash(python *) Bash(git add *) Bash(git commit *)
 ## Environment
 
 ```!
-git status --short
+python3 "${CLAUDE_SKILL_DIR}/scripts/repo_state.py" 2>/dev/null || python "${CLAUDE_SKILL_DIR}/scripts/repo_state.py"
 ```
 
-```!
-git log --oneline -8
-```
+If it reports NOT A GIT REPOSITORY, still export the transcript (step 1) and
+rewrite HANDOFF.md (step 2), but skip the commit/push step.
 
 ## Steps
 
