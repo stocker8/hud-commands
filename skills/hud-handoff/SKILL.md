@@ -10,13 +10,11 @@ allowed-tools: Bash(python3 *) Bash(python *) Bash(git add *) Bash(git commit *)
 ## Environment
 
 ```!
-command -v python3 || command -v python || echo "NO PYTHON FOUND"
-echo "--- project ---"
 git status --short
+```
+
+```!
 git log --oneline -8
-echo "--- logs repo ---"
-git -C "$HOME/claude-logs" rev-parse --is-inside-work-tree 2>/dev/null && \
-  git -C "$HOME/claude-logs" status --short || echo "not a git repo (local-only logs)"
 ```
 
 ## Steps
@@ -25,8 +23,7 @@ Run in order.
 
 ### 1. Export the transcript
 
-Use whichever Python resolved above (`python3` on macOS, usually `python` on
-Windows):
+Try `python3` first (macOS); if it is not found, use `python` (Windows):
 
 ```
 python3 "${CLAUDE_SKILL_DIR}/scripts/export_transcript.py" --session-id "${CLAUDE_SESSION_ID}"

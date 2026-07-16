@@ -18,24 +18,23 @@ python3 "${CLAUDE_SKILL_DIR}/scripts/last_session.py" --exclude-session "${CLAUD
 
 ## HANDOFF.md
 
-```!
-cat HANDOFF.md 2>/dev/null || echo "NO HANDOFF.md IN THIS DIRECTORY"
-```
+Read `HANDOFF.md` from the project root with the Read tool. If it does not
+exist, note that plainly — do not guess at state.
 
 ## Repository state
 
 ```!
-echo "--- machine ---"
-hostname 2>/dev/null
-echo "--- branch ---"
-git rev-parse --abbrev-ref HEAD
-echo "--- vs origin ---"
-git fetch -q 2>/dev/null; git status -sb | head -1
-echo "--- last 15 commits ---"
-git log --oneline -15
-echo "--- working tree ---"
-git status --short
+git fetch -q 2>/dev/null; git status -sb
 ```
+
+```!
+git log --oneline -15
+```
+
+The first line of `git status -sb` shows the branch and its relation to
+origin. For the machine check in the instructions below, use the platform you
+are running on (from your environment) — Windows PC vs Mac is the distinction
+that matters.
 
 ## Instructions
 
