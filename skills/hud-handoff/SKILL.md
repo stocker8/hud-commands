@@ -14,7 +14,11 @@ python3 "${CLAUDE_SKILL_DIR}/scripts/repo_state.py" 2>/dev/null || python "${CLA
 ```
 
 If it reports NOT A GIT REPOSITORY, still export the transcript (step 1) and
-rewrite HANDOFF.md (step 2), but skip the commit/push step.
+rewrite HANDOFF.md (step 2). Then, instead of step 3, offer to set the project
+up: `git init`, a `.gitignore` containing `claude-logs/`, copy
+`${CLAUDE_SKILL_DIR}/scripts/pre-commit` to `.git/hooks/pre-commit`, first
+commit, then `gh repo create <folder-name> --private --source . --push`.
+Ask before creating the GitHub repo; if declined, commit locally only.
 
 ## Steps
 

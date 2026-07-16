@@ -1,0 +1,34 @@
+#!/bin/sh
+#
+# Pre-commit secret scan. This is the backstop layer: it does not depend on
+# Claude's judgment, or on yours at 11pm.
+#
+# Works on macOS (zsh/bash) and Windows (Git Bash, which git uses for hooks).
+#
+# Installed by tools/install.py. Requires gitleaks:
+#   Windows: winget install gitleaks
+#   macOS:   brew install gitleaks
+#
+# NOTE: git hooks are NOT shared through the repo. Run install.py on every
+# machine you commit from — Windows AND Mac.
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+    echo "pre-commit: gitleaks not installed — cannot scan for secrets." >&2
+    echo "            Windows: winget install gitleaks" >&2
+    echo "            macOS:   brew install gitleaks" >&2
+    echo "            Failing closed. A silently skipped scan is worse than none." >&2
+    exit 1
+fi
+
+echo "pre-commit: scanning staged changes for secrets..."
+
+if ! gitleaks protect --staged --redact --verbose; then
+    echo "" >&2
+    echo "pre-commit: BLOCKED — gitleaks found a secret in the staged changes." >&2
+    echo "            Unstage it. Do not use --no-verify to get past this." >&2
+    echo "            If it is a genuine false positive, add a rule to .gitleaks.toml." >&2
+    exit 1
+fi
+
+echo "pre-commit: clean."
+exit 0
