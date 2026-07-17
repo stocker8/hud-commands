@@ -7,7 +7,7 @@ The public source repo is: **https://github.com/stocker8/hud-commands** (no logi
 
 1. **Find the local clone of hud-commands.** Check the likely spots in order:
    - `F:\Claude-Projects\personal\hud-commands` (Windows),
-   - `~/Claude-Projects/personal/hud-commands` or `~/hud-commands` (Mac/Linux).
+   - `~/Developer/hud-commands`, `~/Claude-Projects/personal/hud-commands`, or `~/hud-commands` (Mac/Linux).
    If none exist, ask the user whether they cloned it somewhere else — and if they never cloned it, offer to set it up now with `git clone https://github.com/stocker8/hud-commands "<the standard spot above for this OS>"` (public repo, works without any GitHub account). If they decline, stop.
 
 2. **Record where we are, then pull.** `git -C "<repo>" rev-parse --short HEAD`, then `git -C "<repo>" pull --ff-only`. If the pull fails, report why (no network, diverged history) in one plain line and stop — do not force anything. (A fresh clone from step 1 is already current — skip the pull.)
